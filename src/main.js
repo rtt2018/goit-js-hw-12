@@ -93,6 +93,10 @@ function searchImages(event) {
       }
       addGalleryElements(galleryList, data);
       gallery.refresh();
+      if (data.totalHits === galleryList.childNodes.length) {
+        loadMoreButton.classList.add('visually-hidden');
+        iziToast.show(allImagesLoadded);
+      }
       loadMoreButton.classList.remove('visually-hidden');
       page++;
     })
