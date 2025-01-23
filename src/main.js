@@ -51,9 +51,7 @@ requestForm.addEventListener('input', checkMaxLengthRequestWords);
 
 requestForm.addEventListener('submit', searchImages);
 
-loadMoreButton.addEventListener('click', event => {
-  loadMoreImages(event, responsePhrase);
-});
+loadMoreButton.addEventListener('click', loadMoreImages);
 
 function checkMaxLengthRequestWords(event) {
   if (event.target.value.trim().length > 100) {
@@ -69,6 +67,7 @@ function searchImages(event) {
   loaderElement.classList.remove('visually-hidden');
   galleryList.innerHTML = '';
   responsePhrase = '';
+  loadMoreButton.classList.add('visually-hidden');
 
   const responseUrl = event.currentTarget.requestField.value.trim();
   responsePhrase = responseUrl;
@@ -90,10 +89,16 @@ function searchImages(event) {
     });
 }
 
-function loadMoreImages(event, responsePhrase) {
-  getResponseData(responsePhrase, pageNum, {}).then(data => {
-    addGalleryElements(galleryList, data);
-    gallery.refresh();
-    pageNum += 1;
-  });
+function loadMoreImages() {
+  loaderElement.classList.remove('visually-hidden');
+  getResponseData(responsePhrase, pageNum, {})
+    .then(data => {
+      addGalleryElements(galleryList, data);
+      gallery.refresh();
+      pageNum += 1;
+    })
+    .catch()
+    .finally(() => {
+      loaderElement.classList.add('visually-hidden');
+    });
 }

@@ -158,7 +158,7 @@ li {
 .search-button-centr {
   display: block;
   width: 125px;
-  margin: 0 auto;
+  margin: 20px auto 40px;
 }
 
 .search-field {
@@ -251,4 +251,12 @@ li {
   clip-path: inset(100%);
   clip: rect(0, 0, 0, 0);
   overflow: hidden;
+}
+
+.go-top-button {
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+
+  background-color: #4e75ff;
 }
