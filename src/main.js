@@ -119,7 +119,8 @@ function searchImages(event) {
       //Ховаю кнопку
       loadMoreButton.classList.remove('visually-hidden');
       // Якщо кількість елементів у галереї рівна кількості максхітсів у запиті,
-      // то ховаю кнопку і виводжу повідомлення
+      // то ховаю кнопку і виводжу повідомлення.
+      // Потрібно, якщо на ппершій сторінці менше 15 зображень
       if (data.totalHits === galleryList.childNodes.length) {
         loadMoreButton.classList.add('visually-hidden');
         iziToast.show(allImagesLoadded);
