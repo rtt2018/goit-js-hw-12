@@ -10,8 +10,10 @@ const galleryList = document.querySelector('.gallery');
 const loaderElement = document.querySelector('.loader');
 const requestForm = document.querySelector('.search-form');
 const loadMoreButton = document.getElementById('loadMoreBtn');
+const goToTopButton = document.querySelector('.go-top-button');
+const searchField = document.querySelector('.search-field');
 
-let pageNum = 1;
+let page = 1;
 let responsePhrase = '';
 
 const errFindImagesMessage = {
@@ -26,6 +28,15 @@ const errFindImagesMessage = {
 const owerMaxLengthInputMessg = {
   message:
     'Перевищено максимально допустиму кількість символів!<br> Допустимо 100 символів.',
+  messageColor: '#fff',
+  backgroundColor: '#ffa000',
+  position: 'topRight',
+  iconUrl: iconSvgWarning,
+  displayMode: 'once',
+};
+
+const allImagesLoadded = {
+  message: "We're sorry, but you've reached the end of search results.",
   messageColor: '#fff',
   backgroundColor: '#ffa000',
   position: 'topRight',
@@ -75,11 +86,15 @@ function searchImages(event) {
 
   getResponseData(responseUrl, {})
     .then(data => {
+      console.log('searchImages  data:', data);
+      if (data.hits.length === 0) {
+        iziToast.show(errFindImagesMessage);
+        return;
+      }
       addGalleryElements(galleryList, data);
       gallery.refresh();
       loadMoreButton.classList.remove('visually-hidden');
-      pageNum += 1;
-      console.log('searchImages  pageNum:', pageNum);
+      page++;
     })
     .catch(() => {
       iziToast.show(errFindImagesMessage);
@@ -91,15 +106,49 @@ function searchImages(event) {
 
 function loadMoreImages() {
   loaderElement.classList.remove('visually-hidden');
-  const page = pageNum;
   getResponseData(responsePhrase, { page })
     .then(data => {
+      if (data.hits.length === 0) {
+        iziToast.show(errFindImagesMessage);
+        return;
+      }
+
       addGalleryElements(galleryList, data);
       gallery.refresh();
-      pageNum += 1;
+
+      if (data.totalHits === galleryList.childNodes.length) {
+        loadMoreButton.classList.add('visually-hidden');
+        iziToast.show(allImagesLoadded);
+      }
+      console.log('loadMoreImages  data:', data);
+      const elementFormeasurement = document.querySelector('.gallery-item');
+      const elemGeometry = elementFormeasurement.getBoundingClientRect();
+      const scrollLongitude = elemGeometry.height * 2;
+      window.scrollBy(0, scrollLongitude);
+      page++;
     })
-    .catch()
+    .catch(() => {
+      iziToast.show(errFindImagesMessage);
+    })
     .finally(() => {
       loaderElement.classList.add('visually-hidden');
     });
 }
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 0) {
+    goToTopButton.classList.remove('visually-hidden');
+  } else {
+    goToTopButton.classList.add('visually-hidden');
+  }
+});
+
+goToTopButton.addEventListener('click', () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+  setTimeout(() => {
+    searchField.focus();
+  }, 500);
+});

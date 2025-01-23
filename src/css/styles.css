@@ -58,6 +58,10 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .loader {
   margin: 40px auto 0;
 }
