@@ -125,19 +125,6 @@ li {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  border: 0;
-  padding: 0;
-  white-space: nowrap;
-  clip-path: inset(100%);
-  clip: rect(0, 0, 0, 0);
-  overflow: hidden;
-}
-
 .sl-overlay {
   background-color: rgba(46, 47, 66, 0.8);
 }
@@ -166,6 +153,12 @@ li {
 
 .search-button:hover {
   background-color: #6c8cff;
+}
+
+.search-button-centr {
+  display: block;
+  width: 125px;
+  margin: 0 auto;
 }
 
 .search-field {
@@ -245,4 +238,17 @@ li {
   line-height: 150%;
   letter-spacing: 0.03em;
   color: #fafafb;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0, 0, 0, 0);
+  overflow: hidden;
 }

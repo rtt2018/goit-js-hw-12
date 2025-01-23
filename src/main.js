@@ -3,12 +3,14 @@ import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import iconSvgError from './img/allert.svg';
 import iconSvgWarning from './img/warning.svg';
-import getRequestURL from './js/pixabay-api.js';
+import getResponseData from './js/pixabay-api.js';
 import addGalleryElements from './js/render-functions.js';
 
 const galleryList = document.querySelector('.gallery');
 const loaderElement = document.querySelector('.loader');
 const requestForm = document.querySelector('.search-form');
+
+let pageNum = 1;
 
 const errFindImagesMessage = {
   message:
@@ -71,27 +73,13 @@ function searchImages(event) {
   loaderElement.classList.remove('visually-hidden');
   galleryList.innerHTML = '';
 
-  const responseUrl = getRequestURL(
-    event.currentTarget.requestField.value.trim()
-  );
+  const responseUrl = event.currentTarget.requestField.value.trim();
+
   requestForm.reset();
 
-  fetch(responseUrl, {
-    headers: {
-      Accept: 'application/json',
-    },
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    })
+  getResponseData(responseUrl, pageNum, {})
     .then(data => {
-      if (data.hits.length === 0) {
-        iziToast.show(errFindImagesMessage);
-        return;
-      }
+      console.log('searchImages  data:', data);
       addGalleryElements(galleryList, data);
       gallery.refresh();
     })
