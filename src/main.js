@@ -125,8 +125,8 @@ function loadMoreImages() {
         iziToast.show(allImagesLoadded);
       }
       const elementFormeasurement = document.querySelector('.gallery-item');
-      const elemGeometry = elementFormeasurement.getBoundingClientRect();
-      const scrollLongitude = elemGeometry.height * 2;
+      const elementGeometry = elementFormeasurement.getBoundingClientRect();
+      const scrollLongitude = elementGeometry.height * 2;
       window.scrollBy(0, scrollLongitude);
       page++;
     })
