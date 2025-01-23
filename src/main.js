@@ -87,7 +87,6 @@ function searchImages(event) {
 
   getResponseData(responseUrl, {})
     .then(data => {
-      console.log('searchImages  data:', data);
       if (data.hits.length === 0) {
         iziToast.show(errFindImagesMessage);
         return;
@@ -96,7 +95,6 @@ function searchImages(event) {
       gallery.refresh();
       loadMoreButton.classList.remove('visually-hidden');
       page++;
-      console.log('searchImages  page:', page);
     })
     .catch(() => {
       iziToast.show(errFindImagesMessage);
@@ -126,7 +124,6 @@ function loadMoreImages() {
         loadMoreButton.classList.add('visually-hidden');
         iziToast.show(allImagesLoadded);
       }
-      console.log('loadMoreImages  data:', data);
       const elementFormeasurement = document.querySelector('.gallery-item');
       const elemGeometry = elementFormeasurement.getBoundingClientRect();
       const scrollLongitude = elemGeometry.height * 2;
