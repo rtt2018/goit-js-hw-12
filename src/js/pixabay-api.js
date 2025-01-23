@@ -2,11 +2,7 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
-export default async function getResponseData(
-  requestWords,
-  page_num,
-  additionalParams
-) {
+export default async function getResponseData(requestWords, additionalParams) {
   const requestParams = {
     key: '48329924-6906af0078b1de986ec16b549',
     q: requestWords,
@@ -14,14 +10,14 @@ export default async function getResponseData(
     orientation: 'horizontal',
     safesearch: true,
     per_page: 15,
-    page: page_num,
   };
 
   if (Object.keys(additionalParams).length > 0) {
-    for (param in additionalParams) {
+    for (let param in additionalParams) {
       requestParams[param] = additionalParams[param];
     }
   }
+  console.log('getResponseData  requestParams:', requestParams);
 
   const responseData = await axios
     .get('', {

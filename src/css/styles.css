@@ -254,9 +254,17 @@ li {
 }
 
 .go-top-button {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
   border: none;
   border-radius: 50%;
-  width: 20px;
-
+  width: 50px;
+  height: 50px;
   background-color: #4e75ff;
+  padding: 8px;
+}
+
+.go-top-button:hover {
+  background-color: #6c8cff;
 }

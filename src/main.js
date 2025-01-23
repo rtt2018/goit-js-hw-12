@@ -73,7 +73,7 @@ function searchImages(event) {
   responsePhrase = responseUrl;
   requestForm.reset();
 
-  getResponseData(responseUrl, pageNum, {})
+  getResponseData(responseUrl, {})
     .then(data => {
       addGalleryElements(galleryList, data);
       gallery.refresh();
@@ -91,7 +91,8 @@ function searchImages(event) {
 
 function loadMoreImages() {
   loaderElement.classList.remove('visually-hidden');
-  getResponseData(responsePhrase, pageNum, {})
+  const page = pageNum;
+  getResponseData(responsePhrase, { page })
     .then(data => {
       addGalleryElements(galleryList, data);
       gallery.refresh();
