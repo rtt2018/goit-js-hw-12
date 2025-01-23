@@ -78,6 +78,7 @@ function searchImages(event) {
   loaderElement.classList.remove('visually-hidden');
   galleryList.innerHTML = '';
   responsePhrase = '';
+  page = 1;
   loadMoreButton.classList.add('visually-hidden');
 
   const responseUrl = event.currentTarget.requestField.value.trim();
