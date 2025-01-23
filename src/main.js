@@ -9,8 +9,10 @@ import addGalleryElements from './js/render-functions.js';
 const galleryList = document.querySelector('.gallery');
 const loaderElement = document.querySelector('.loader');
 const requestForm = document.querySelector('.search-form');
+const loadMoreButton = document.getElementById('loadMoreBtn');
 
 let pageNum = 1;
+let responsePhrase = '';
 
 const errFindImagesMessage = {
   message:
@@ -49,6 +51,10 @@ requestForm.addEventListener('input', checkMaxLengthRequestWords);
 
 requestForm.addEventListener('submit', searchImages);
 
+loadMoreButton.addEventListener('click', event => {
+  loadMoreImages(event, responsePhrase);
+});
+
 function checkMaxLengthRequestWords(event) {
   if (event.target.value.trim().length > 100) {
     iziToast.show(owerMaxLengthInputMessg);
@@ -56,32 +62,25 @@ function checkMaxLengthRequestWords(event) {
   }
 }
 function searchImages(event) {
-  // 1. Показуємо лоадер
-  // 2. Відсилаємо запит
-  // 3. Отримуємо респонз від беку
-  // 4. Ховаємо лоадер
-  // 5. Обробляємо результат
-  //   5.1 Якщо результат прийшов без зображень, то виводимо повідомленння
-  //   5.2 Якщо зображення знайдено, додаємо елементи у галерею
-  // 6.Робимо релоад сімпллайтбоксу
-  // 7. Очищуємо все
-
   event.preventDefault();
   if (event.currentTarget.requestField.value.trim().length === 0) {
     return;
   }
   loaderElement.classList.remove('visually-hidden');
   galleryList.innerHTML = '';
+  responsePhrase = '';
 
   const responseUrl = event.currentTarget.requestField.value.trim();
-
+  responsePhrase = responseUrl;
   requestForm.reset();
 
   getResponseData(responseUrl, pageNum, {})
     .then(data => {
-      console.log('searchImages  data:', data);
       addGalleryElements(galleryList, data);
       gallery.refresh();
+      loadMoreButton.classList.remove('visually-hidden');
+      pageNum += 1;
+      console.log('searchImages  pageNum:', pageNum);
     })
     .catch(() => {
       iziToast.show(errFindImagesMessage);
@@ -89,4 +88,12 @@ function searchImages(event) {
     .finally(() => {
       loaderElement.classList.add('visually-hidden');
     });
+}
+
+function loadMoreImages(event, responsePhrase) {
+  getResponseData(responsePhrase, pageNum, {}).then(data => {
+    addGalleryElements(galleryList, data);
+    gallery.refresh();
+    pageNum += 1;
+  });
 }
