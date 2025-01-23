@@ -95,6 +95,7 @@ function searchImages(event) {
       gallery.refresh();
       loadMoreButton.classList.remove('visually-hidden');
       page++;
+      console.log('searchImages  page:', page);
     })
     .catch(() => {
       iziToast.show(errFindImagesMessage);
@@ -106,6 +107,10 @@ function searchImages(event) {
 
 function loadMoreImages() {
   loaderElement.classList.remove('visually-hidden');
+  window.scroll({
+    top: document.body.scrollHeight,
+    behavior: 'smooth',
+  });
   getResponseData(responsePhrase, { page })
     .then(data => {
       if (data.hits.length === 0) {
