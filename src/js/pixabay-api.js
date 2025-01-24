@@ -10,7 +10,6 @@ export default async function getResponseData(requestWords, additionalParams) {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
-    per_page: 15,
   };
 
   // Динамічно додаю нові параметри, якщо вони були передані у функцію у параметрі additionalParams

@@ -16,6 +16,7 @@ const searchField = document.querySelector('.search-field');
 
 let page = 1; // Номер сторінки для пагінації
 let responsePhrase = ''; // У цю змінну записую пошукову фразу для передачі у запит на бек
+const per_page = 15;
 
 // Параметри повідомлень, які будуть виводитися iziToast
 const errFindImagesMessage = {
@@ -95,18 +96,20 @@ function searchImages(event) {
   galleryList.innerHTML = '';
   // Очищую пошукову фразу
   responsePhrase = '';
-  // Встановлюю номерсторінки, яка має бути по замовчуванні, передаю її тільки при пагінації
+  // Встановлюю номерсторінки, яка має бути по замовчуванні,
+  // передаю її тільки при пагінації
   page = 1;
   // Приховую кнопку Зававнтажити ше
   loadMoreButton.classList.add('visually-hidden');
 
   // Читаю пошукову фразу
-  const responseUrl = event.currentTarget.requestField.value.trim();
-  responsePhrase = responseUrl;
+  const questionPhrase = event.currentTarget.requestField.value.trim();
+  // Запам'ятовую її глобально, для передачі у функцію пагінації
+  responsePhrase = questionPhrase;
   requestForm.reset();
 
   // Роблю запит
-  getResponseData(responseUrl, {})
+  getResponseData(questionPhrase, { per_page })
     .then(data => {
       // Якщо масив даних порожній, то виводжу повідомлення і ретурнюся
       if (data.hits.length === 0) {
@@ -121,7 +124,9 @@ function searchImages(event) {
       // Якщо кількість елементів у галереї рівна кількості максхітсів у запиті,
       // то ховаю кнопку і виводжу повідомлення.
       // Потрібно, якщо на ппершій сторінці менше 15 зображень
-      if (data.totalHits === galleryList.childNodes.length) {
+
+      //if (data.totalHits === galleryList.childNodes.length) {
+      if (Math.ceil(data.totalHits / per_page) === page) {
         loadMoreButton.classList.add('visually-hidden');
         iziToast.show(allImagesLoadded);
       }
@@ -145,7 +150,7 @@ function loadMoreImages() {
     behavior: 'smooth',
   });
   // Відсилаю запит Аксіосом, передаю номер сторінки page як параметр, який буде доадний у параметри запиту
-  getResponseData(responsePhrase, { page })
+  getResponseData(responsePhrase, { per_page, page })
     .then(data => {
       // Як і при сабміті при нуловій довжині данх виводжу повідомлення і ретьорн
       if (data.hits.length === 0) {
@@ -158,7 +163,7 @@ function loadMoreImages() {
 
       // Якщо кількість елементів у галереї рівна кількості максхітсів у запиті,
       // то ховаю кнопку і виводжу повідомлення
-      if (data.totalHits === galleryList.childNodes.length) {
+      if (Math.ceil(data.totalHits / per_page) === page) {
         loadMoreButton.classList.add('visually-hidden');
         iziToast.show(allImagesLoadded);
       }
