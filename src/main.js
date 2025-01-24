@@ -14,7 +14,7 @@ const goToTopButton = document.querySelector('.go-top-button');
 const searchField = document.querySelector('.search-field');
 
 let page = 1;
-let responsePhrase = '';
+let questionPhrase = '';
 const per_page = 15;
 
 const errFindImagesMessage = {
@@ -61,90 +61,82 @@ gallery.on('error.simplelightbox', function (e) {
 
 requestForm.addEventListener('input', checkMaxLengthRequestWords);
 
-requestForm.addEventListener('submit', searchImages);
+requestForm.addEventListener('submit', event => {
+  loadImages(event, true);
+});
 
-loadMoreButton.addEventListener('click', loadMoreImages);
+loadMoreButton.addEventListener('click', event => {
+  loadImages(event, false);
+});
+
+async function loadImages(event, isSubmit) {
+  if (isSubmit) {
+    event.preventDefault();
+  }
+
+  if (isSubmit && event.currentTarget.requestField.value.trim().length === 0) {
+    return;
+  }
+
+  if (isSubmit) {
+    loaderElement.classList.remove('visually-hidden');
+    galleryList.innerHTML = '';
+    questionPhrase = '';
+    page = 1;
+    loadMoreButton.classList.add('visually-hidden');
+
+    questionPhrase = event.currentTarget.requestField.value.trim();
+    requestForm.reset();
+  } else {
+    loaderElement.classList.remove('visually-hidden');
+    window.scroll({
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
+  }
+
+  try {
+    const { hits, totalHits } = await getResponseData(questionPhrase, {
+      per_page,
+      page,
+    });
+
+    if (hits.length === 0) {
+      iziToast.show(errFindImagesMessage);
+      return;
+    }
+
+    addGalleryElements(galleryList, hits);
+    gallery.refresh();
+
+    loadMoreButton.classList.remove('visually-hidden');
+
+    //if (data.totalHits === galleryList.childNodes.length) {
+    if (Math.ceil(totalHits / per_page) === page) {
+      loadMoreButton.classList.add('visually-hidden');
+      iziToast.show(allImagesLoadded);
+    }
+
+    if (!isSubmit) {
+      const elementFormeasurement = document.querySelector('.gallery-item');
+      const elementGeometry = elementFormeasurement.getBoundingClientRect();
+      const scrollLongitude = elementGeometry.height * 2;
+      window.scrollBy(0, scrollLongitude);
+    }
+
+    page++;
+  } catch (error) {
+    iziToast.show(errFindImagesMessage);
+  } finally {
+    loaderElement.classList.add('visually-hidden');
+  }
+}
 
 function checkMaxLengthRequestWords(event) {
   if (event.target.value.trim().length > 100) {
     iziToast.show(owerMaxLengthInputMessg);
     event.target.value = event.target.value.trim().slice(0, 100);
   }
-}
-
-function searchImages(event) {
-  event.preventDefault();
-
-  if (event.currentTarget.requestField.value.trim().length === 0) {
-    return;
-  }
-
-  loaderElement.classList.remove('visually-hidden');
-  galleryList.innerHTML = '';
-  responsePhrase = '';
-  page = 1;
-  loadMoreButton.classList.add('visually-hidden');
-
-  const questionPhrase = event.currentTarget.requestField.value.trim();
-  responsePhrase = questionPhrase;
-  requestForm.reset();
-
-  getResponseData(questionPhrase, { per_page })
-    .then(data => {
-      if (data.hits.length === 0) {
-        iziToast.show(errFindImagesMessage);
-        return;
-      }
-      addGalleryElements(galleryList, data);
-      gallery.refresh();
-      loadMoreButton.classList.remove('visually-hidden');
-
-      //if (data.totalHits === galleryList.childNodes.length) {
-      if (Math.ceil(data.totalHits / per_page) === page) {
-        loadMoreButton.classList.add('visually-hidden');
-        iziToast.show(allImagesLoadded);
-      }
-      page++;
-    })
-    .catch(() => {
-      iziToast.show(errFindImagesMessage);
-    })
-    .finally(() => {
-      loaderElement.classList.add('visually-hidden');
-    });
-}
-
-function loadMoreImages() {
-  loaderElement.classList.remove('visually-hidden');
-  window.scroll({
-    top: document.body.scrollHeight,
-    behavior: 'smooth',
-  });
-  getResponseData(responsePhrase, { per_page, page })
-    .then(data => {
-      if (data.hits.length === 0) {
-        iziToast.show(errFindImagesMessage);
-        return;
-      }
-      addGalleryElements(galleryList, data);
-      gallery.refresh();
-
-      if (Math.ceil(data.totalHits / per_page) === page) {
-        loadMoreButton.classList.add('visually-hidden');
-        iziToast.show(allImagesLoadded);
-      }
-      const elementFormeasurement = document.querySelector('.gallery-item');
-      const elementGeometry = elementFormeasurement.getBoundingClientRect();
-      const scrollLongitude = elementGeometry.height * 2;
-      window.scrollBy(0, scrollLongitude);
-      page++;
-    })
-    .catch(() => {
-      iziToast.show(errFindImagesMessage);
-    })
-    .finally(() => {
-      loaderElement.classList.add('visually-hidden');
-    });
 }
 
 window.addEventListener('scroll', () => {

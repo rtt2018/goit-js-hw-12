@@ -15,8 +15,8 @@ export default async function getResponseData(
     ...additionalParams,
   };
 
-  const responseData = await axios.get('', {
+  const { data } = await axios.get('', {
     params: requestParams,
   });
-  return responseData;
+  return data;
 }

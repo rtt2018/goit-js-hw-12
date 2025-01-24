@@ -1,5 +1,5 @@
 export default function addGalleryElements(element, responseAnswerObject) {
-  const elementsArray = responseAnswerObject.hits.map(element => {
+  const elementsArray = responseAnswerObject.map(element => {
     const {
       webformatURL,
       largeImageURL,
